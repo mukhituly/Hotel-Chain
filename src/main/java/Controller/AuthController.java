@@ -2,6 +2,7 @@ package Controller;
 
 import Converter.AuthConverter;
 import Model.User;
+import Model.Employee;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,7 +18,7 @@ public class AuthController {
     *  Check whether the password confirmed
     */
     public boolean isPasswordConfirmed(String password, String repeated) {
-         return password == repeated;
+         return password.equals(repeated);
     }
 
     /*
@@ -34,21 +35,36 @@ public class AuthController {
     */
     public User login(String username,
                       String password) throws Exception {
-        if(username.equals("test") && password.equals("Nuedukz10")) {
-            return new User("test", "user", "username");
-        }
         Class.forName("com.mysql.jdbc.Driver");
 
-        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/new_schema?allowPublicKeyRetrieval=true&useSSL=false",
+        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false",
                                                            "root",
                                                        "password");
-        PreparedStatement preparedStatement = connection.prepareStatement("select * from login where username = ? and password = ?");
+        PreparedStatement preparedStatement = connection.prepareStatement("select * from mydb.Guest where guestID = ? and password = ?");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
 
         ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
 
         return new AuthConverter(resultSet).singleUser();
+    }
+
+    public Employee employeeLogin(String username,
+                      String password) throws Exception {
+        Class.forName("com.mysql.jdbc.Driver");
+
+        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false",
+                "root",
+                "password");
+        PreparedStatement preparedStatement = connection.prepareStatement("select * from mydb.Employee where EmployeeID = ? and password = ?");
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+
+        return new AuthConverter(resultSet).singleEmployee();
     }
 
 
@@ -59,10 +75,12 @@ public class AuthController {
                          String firstName,
                          String secondName,
                          String password,
-                         String repeatedPassword) throws Exception {
-        if(username.equals("test") && password.equals("Nuedukz10")) {
-            return;
-        }
+                         String repeatedPassword,
+                         String address,
+                         String homePhoneNumber, String mobilePhoneNumber,
+                         String idType, String idNumber,
+                         String numberofAdults, String numberofChidren)
+            throws Exception {
         if(!isPasswordConfirmed(password, repeatedPassword)) {
             throw new Exception("Please confirm your password");
         }
@@ -72,14 +90,19 @@ public class AuthController {
 
         Class.forName("com.mysql.jdbc.Driver");
 
-        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/new_schema?allowPublicKeyRetrieval=true&useSSL=false",
+        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mydb?allowPublicKeyRetrieval=true&useSSL=false",
                                                            "root",
                                                        "password");
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO login VALUES (?, ?, ?, ?)");
+        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Guest VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         preparedStatement.setString(1, username);
-        preparedStatement.setString(2, password);
-        preparedStatement.setString(3, firstName);
-        preparedStatement.setString(4, secondName);
+        preparedStatement.setString(2, homePhoneNumber);
+        preparedStatement.setInt(3, Integer.parseInt(idNumber));
+        preparedStatement.setString(4, idType);
+        preparedStatement.setInt(5, Integer.parseInt(mobilePhoneNumber));
+        preparedStatement.setString(6, address);
+        preparedStatement.setString(7, firstName);
+        preparedStatement.setString(8, secondName);
+        preparedStatement.setString(9, password);
         preparedStatement.execute();
     }
 

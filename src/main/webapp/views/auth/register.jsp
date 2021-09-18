@@ -56,6 +56,64 @@
                 <div id="usernameNotification" class="notification is-danger is-light is-hidden"></div>
 
                 <div class="field">
+                    <label class=has-text-weight-light">Home Phone Number</label>
+                    <div class="control">
+                        <input id="homePhone" class="input" type="text" placeholder="Text input">
+                    </div>
+                </div>
+                <div id="homePhoneNotification" class="notification is-danger is-light is-hidden"></div>
+
+                <div class="field">
+                    <label class=has-text-weight-light">Mobile Phone Number</label>
+                    <div class="control">
+                        <input id="mobilePhone" class="input" type="text" placeholder="Text input">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class=has-text-weight-light">Identification Type:</label>
+                    <br>
+                    <div class="select">
+                        <select id="idt">
+                            <option value="0"> </option>
+                            <option id="opt1" value="Passport">Passport</option>
+                            <option id="opt2" value="National ID">National ID</option>
+                            <option id="opt3" value="Drier's license">Driver's license</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="idTypeNotification" class="notification is-danger is-light is-hidden"></div>
+                <div class="field">
+                    <label class=has-text-weight-light">Identification Number</label>
+                    <div class="control">
+                        <input id="idNumber" class="input" type="text" placeholder="Text Input">
+                    </div>
+                </div>
+                <div id="idNumberNotification" class="notification is-danger is-light is-hidden"></div>
+
+                <div class="field">
+                    <label class=has-text-weight-light"> Address </label>
+                    <div class="control">
+                        <input id="address" class="input" type="text" placeholder="Text Input">
+                    </div>
+                </div>
+                <div id="addressNotification" class="notification is-danger is-light is-hidden"></div>
+
+                <div class="field">
+                    <label>Number of adults:</label>
+                    <input type="number" id="adults" name="quantity" min="1" max="40">
+                </div>
+
+                <div id="adultsNotification" class="notification is-danger is-light is-hidden"></div>
+
+                <div class="field">
+                    <label>Number of children:</label>
+                    <input type="number" id="children" name="quantity" min="1" max="40">
+                </div>
+
+                <div id="childrenNotification" class="notification is-danger is-light is-hidden"></div>
+
+                <div class="field">
                     <label class="has-text-weight-light">Create Password</label>
                     <div class="control has-icons-left has-icons-right">
                         <input id="password" type="password" placeholder="********" class="input" required>
@@ -77,7 +135,6 @@
                 </div>
                 <div id="repeatedPasswordNotification" class="notification is-danger is-light is-hidden"></div>
 
-
                 <div class="field">
                     <div class="control">
                         <a id="registerButton" class="button is-primary">Register</a>
@@ -93,6 +150,18 @@
         $(document).ready(function () {
             $("#registerButton").on('click', function () {
                 registerUser();
+            });
+
+            $("#homePhone").keyup(function () {
+                validPhoneNumber("home")
+            });
+
+            $("#mobilePhone").keyup(function () {
+                validPhoneNumber("mobile")
+            });
+
+            $("#idNumber").keyup(function () {
+                validNumber("#idNumber")
             });
 
             $("#password").keyup(function () {
@@ -113,7 +182,6 @@
             });
         });
 
-
         function validPassword() {
             const password = $("#password").val();
             if(password.length === 0 || password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/)) {
@@ -124,6 +192,28 @@
                 $("#passwordNotification").html("Password must contain at least 8 characters, 1 number, 1 uppercase and 1 lowercase");
                 $("#passwordNotification").removeClass("is-hidden");
                 return false;
+            }
+        }
+
+        function validPhoneNumber(pref) {
+            phone = $("#" + pref + "Phone").val()
+            if (phone.match(/^[0-9]*$/)){
+                $("#" + pref +"PhoneNotification").html("");
+                $("#" + pref +"PhoneNotification").addClass("is-hidden");
+            } else {
+                $("#" + pref +"PhoneNotification").html("Phone number must contain numbers only!");
+                $("#" + pref +"PhoneNotification").removeClass("is-hidden");
+            }
+        }
+
+        function validNumber(pref){
+            num = $(pref).val()
+            if (num.match(/^[0-9]*$/)){
+                $(pref + "Notification").html("");
+                $(pref + "Notification").addClass("is-hidden");
+            } else {
+                $(pref + "Notification").html("Must contain numbers only!");
+                $(pref + "Notification").removeClass("is-hidden");
             }
         }
 
@@ -140,25 +230,72 @@
             }
         }
 
+        function checkType(idx){
+            if(idx === "0") {
+                $("#idTypeNotification").html("Please choose identification type");
+                $("#idTypeNotification").removeClass("is-hidden");
+                return false;
+            } else {
+                $("#idTypeNotification").html("");
+                $("#idTypeNotification").addClass("is-hidden");
+                return true;
+            }
+        }
+
         function registerUser() {
             const firstName = $("#firstName").val();
             const secondName = $("#secondName").val();
             const username = $("#username").val();
             const password = $("#password").val();
             const repeatedPassword = $("#repeatedPassword").val();
+            const homePhone = $("#homePhone").val();
+            const mobilePhone = $("#mobilePhone").val();
+            const idNumber = $("#idNumber").val();
+            const address = $("#address").val();
+
+            var e = document.getElementById("idt");
+            const idType = e.value;
+            console.log(idType)
+            if(idType == "Passport") {
+                document.getElementById('opt1').id = 'idType_opt';
+            } else if(idType=="National ID"){
+                document.getElementById('opt2').id = 'idType_opt';
+            } else if(idType=="Driver's license"){
+                document.getElementById('opt3').id = 'idType_opt';
+            }
+            
+            var e = document.getElementById("adults");
+            const adults = e.value;
+
+            var e = document.getElementById("children");
+            const children = e.value;
 
             if(checkFilled("firstName")
                 && checkFilled("secondName")
                 && checkFilled("username")
                 && checkFilled("password")
-                && checkFilled("repeatedPassword")) {
+                && checkFilled("repeatedPassword")
+                && checkFilled("homePhone")
+                && checkFilled("mobilePhone")
+                && checkFilled("idNumber")
+                && checkType(idType)
+                && checkFilled("address")
+                && checkFilled("adults")
+                && checkFilled("children")) {
 
                 $.post("auth?auth=register", {
                     username: username,
                     password: password,
                     firstName: firstName,
                     secondName: secondName,
-                    repeatedPassword: repeatedPassword
+                    repeatedPassword: repeatedPassword,
+                    homePhone: homePhone,
+                    mobilePhone: mobilePhone,
+                    idNumber: idNumber,
+                    idType: idType,
+                    adultsNum: adults,
+                    childrenNum: children,
+                    address: address
                 }, function(res) {
                     $("#registerNotification").html(res.message);
                     $("#registerNotification").removeClass("is-hidden");

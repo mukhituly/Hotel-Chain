@@ -1,5 +1,6 @@
 package Converter;
 
+import Model.Employee;
 import Model.User;
 
 import java.sql.ResultSet;
@@ -17,11 +18,17 @@ public class AuthConverter {
     //Converts SQL result to single user
     public User singleUser() throws SQLException {
         User user = new User();
-        user.setFirstName(resultSet.getString("first_name"));
-        user.setSecondName(resultSet.getString("second_name"));
-        user.setUsername(resultSet.getString("username"));
-
+        user.setFirstName(resultSet.getString("firstName"));
+        user.setSecondName(resultSet.getString("secondName"));
+        user.setUsername(resultSet.getString("guestID"));
         return user;
+    }
+
+    public Employee singleEmployee() throws SQLException {
+        Employee employee = new Employee();
+        employee.setEmployeeID(resultSet.getString("employeeID"));
+        employee.setJobTitle(resultSet.getString("jobTitle"));
+        return employee;
     }
 
     //Converts SQL result several users

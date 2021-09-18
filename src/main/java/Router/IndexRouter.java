@@ -16,4 +16,5 @@ public class IndexRouter extends HttpServlet {
         RequestDispatcher dispatcher = req.getRequestDispatcher("views/home/home.jsp");
         dispatcher.forward(req, resp);
     }
+
 }
